@@ -22,3 +22,10 @@ app.get('/', (_request, response) => {
 app.listen(PORT, () => {
   console.log('Online');
 });
+
+// Endpoint GET /talker
+/* A requisição deve retornar tatus 200 e um array com os dados dos palestrantes. Caso não haja ninguém cadastrado, dee retornar um array vazio e status 200. */
+app.get('/talker', async (_req, res) => {
+  const talkersFile = await readTalkersFile();
+  return res.status(200).json(talkersFile);
+});
