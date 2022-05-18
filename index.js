@@ -27,5 +27,5 @@ app.listen(PORT, () => {
 /* A requisição deve retornar tatus 200 e um array com os dados dos palestrantes. Caso não haja ninguém cadastrado, dee retornar um array vazio e status 200. */
 app.get('/talker', async (_req, res) => {
   const talkersFile = await readTalkersFile();
-  return res.status(200).json(talkersFile);
+  return res.status(HTTP_OK_STATUS).json(talkersFile);
 });
