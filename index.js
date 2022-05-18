@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
+const crypto = require('crypto');
 
 const app = express();
 app.use(bodyParser.json());
@@ -41,3 +42,11 @@ app.get('/talker/:id', async (req, res) => {
   }
   return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
+
+// Endpoint POST
+// Ref.: https://nodejs.org/api/crypto.html#cryptorandombytessize-callback
+// Utilizado toString('hex') para transformar binário em hex
+// 16 caractéres em hex -> 8 bytes
+const generateRandomToken = () => crypto.randomBytes(8).toString('hex');
+
+app.post('/login', (_req, res) => res.status(200).json({ token: generateRandomToken() }));
