@@ -41,9 +41,24 @@ const talkValidation = (req, res, next) => {
   next();
 };
 
+const dateAndRateValidation = (req, res, next) => {
+  const { talk: { watchedAt, rate } } = req.body;
+  const validDate = /(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}/;
+
+  if (!validDate.test(watchedAt)) {
+    return res.status(400).json({ message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' });
+  }
+
+  if (+rate < 0 || +rate > 5) {
+    return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  next();
+};
+
 module.exports = {
   tokenValidation,
   nameValidation,
   ageValidation,
   talkValidation,
+  dateAndRateValidation,
 };
