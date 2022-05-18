@@ -43,10 +43,13 @@ app.get('/talker/:id', async (req, res) => {
   return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
-// Endpoint POST
+// Endpoint POST /login
+/* O endpoint recebe no corpo da requisição os campos email e password e retornar um token aleatório de 16 caracteres. Foi utilizado o crypto-js para gerar os tokens. */
 // Ref.: https://nodejs.org/api/crypto.html#cryptorandombytessize-callback
-// Utilizado toString('hex') para transformar binário em hex
-// 16 caractéres em hex -> 8 bytes
+/* 
+- Utilizado toString('hex') para transformar binário em hex
+- 16 caractéres em hex -> 8 bytes
+*/
 const generateRandomToken = () => crypto.randomBytes(8).toString('hex');
 
 app.post('/login', (_req, res) => res.status(200).json({ token: generateRandomToken() }));
