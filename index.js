@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const crypto = require('crypto');
 const validationLogin = require('./middleware/loginvalidation');
+const { tokenValidation,
+  nameValidation,
+  ageValidation,
+  talkValidation,
+  dateAndRateValidation } = require('./middleware/talkervalidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,6 +19,11 @@ const PORT = '3000';
 const readTalkersFile = async () => {
   const rawFile = await fs.readFile('./talker.json', 'utf8');
   return JSON.parse(rawFile);
+};
+
+// Função para escrever no arquivo talker.json
+const writeOnFile = async (rawContent) => {
+ await fs.writeFile('./talker.json', JSON.stringify(rawContent, null, 2), 'utf8');
 };
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -56,3 +66,30 @@ const generateRandomToken = () => crypto.randomBytes(8).toString('hex');
 
 app.post('/login', validationLogin, (_req, res) => 
   res.status(200).json({ token: generateRandomToken() }));
+
+// Endpoint POST /talker
+/* O endpoint é capaz de adicionar uma nova pessoa palestrante ao arquivo talker.json */
+app.post('/talker',
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  talkValidation,
+  dateAndRateValidation,
+  async (req, res) => {
+    const { name, age, talk: { rate, watchedAt } } = req.body;
+    const talkersFile = await readTalkersFile();
+
+    const objNewTalker = {
+      id: (talkersFile[talkersFile.length - 1].id) + 1,
+      name,
+      age,
+      talk: {
+        watchedAt,
+        rate,
+      },
+    };
+
+    await writeOnFile([...talkersFile, objNewTalker]);
+
+    return res.status(201).json(objNewTalker);
+});
