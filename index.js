@@ -93,3 +93,31 @@ app.post('/talker',
 
     return res.status(201).json(objNewTalker);
 });
+
+// Endpoint PUT /talker/:id
+/* O endpoint é capaz de editar uma pessoa palestrante com base no id da rota, sem alterar o id registrado. */
+app.put('/talker/:id',
+  tokenValidation,
+  nameValidation,
+  ageValidation,
+  talkValidation,
+  dateAndRateValidation,
+  async (req, res) => {
+    const { id } = req.params;
+    const { name, age, talk: { rate, watchedAt } } = req.body;
+    const talkersFile = await readTalkersFile();
+
+    const indexOfId = talkersFile.findIndex((speaker) => speaker.id === +id);
+    talkersFile[indexOfId] = {
+      id: +id,
+      name,
+      age,
+      talk: {
+        watchedAt,
+        rate,
+      },
+    };
+    await writeOnFile(talkersFile);
+
+    return res.status(200).json(talkersFile[indexOfId]);
+});
