@@ -121,3 +121,19 @@ app.put('/talker/:id',
 
     return res.status(200).json(talkersFile[indexOfId]);
 });
+
+// Endpoint DELETE /talker/:id
+/* O endpoint deleta uma pessoa palestrante com base no id da rota. Retorna o status 204, sem conteúdo na resposta. */
+// Delete x Splice : https://stackoverflow.com/questions/500606/deleting-array-elements-in-javascript-delete-vs-splice
+app.delete('/talker/:id',
+  tokenValidation,
+  async (req, res) => {
+    const { id } = req.params;
+    const talkersFile = await readTalkersFile();
+
+    const indexOfId = talkersFile.findIndex((speaker) => speaker.id === +id);
+    talkersFile.splice(indexOfId, 1);
+    await writeOnFile(talkersFile);
+
+    return res.status(204).end();
+});
