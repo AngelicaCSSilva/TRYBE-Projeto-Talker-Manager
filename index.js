@@ -42,6 +42,14 @@ app.get('/talker', async (_req, res) => {
   return res.status(HTTP_OK_STATUS).json(talkersFile);
 });
 
+app.get('/talker/search', tokenValidation, async (req, res) => {
+  const { q } = req.query;
+  const talkersFile = await readTalkersFile();
+
+  const result = talkersFile.filter(({ name }) => name.includes(q));
+  res.status(HTTP_OK_STATUS).json(result);
+});
+
 // Endpoint GET /talker/:id
 /* A requisição retorna o status 200 e uma pessoa palestrante com base no id da rota. Caso não haja ninguém com esse id, deve retornar o status 404 com a mensagem 'Pessoa palestrante não encontrada'. */
 app.get('/talker/:id', async (req, res) => {
